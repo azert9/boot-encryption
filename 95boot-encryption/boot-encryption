@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -eu
+set -o noclobber
+umask 077
+
+
+# Importing public keys
+
+find /etc/boot-encryption/public -type f -name '*.key' -print0 | while IFS= read -r -d $'\0' file
+do
+	gpg --import "$file"
+done
+
+
+# Waiting for card to be inserted
+
+while ! gpg --card-status
+do
+	sleep 1
+done
+
+
+# Decrypt boot keys
+
+cd /etc/boot-encryption/cryptsetup
+
+find . -type f -name "*.key.gpg" -print0 | while IFS= read -r -d $'\0' file
+do
+	mkdir -p /run/cryptsetup-keys.d
+	gpg --decrypt --output /run/cryptsetup-keys.d/"$(basename --suffix=.gpg "$file")" "$file"
+done

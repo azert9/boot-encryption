@@ -1,0 +1,12 @@
+#ifndef INC_A7DE1B36C48F49D1B16E62028E76EE7C_HPP
+#define INC_A7DE1B36C48F49D1B16E62028E76EE7C_HPP
+
+#include <string>
+
+class PinPrompter
+{
+public:
+	std::string prompt();
+};
+
+#endif // INC_A7DE1B36C48F49D1B16E62028E76EE7C_HPP

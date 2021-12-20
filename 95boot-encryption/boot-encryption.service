@@ -1,0 +1,17 @@
+[Unit]
+Description=Unlock Boot Using YubiKey/GPG
+ConditionPathExists=/etc/initrd-release
+DefaultDependencies=no
+Conflicts=shutdown.target
+
+Requires=cryptsetup-pre.target
+After=cryptsetup-pre.target
+
+# insert point: Unit
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/boot-encryption
+
+[Install]
+# insert point: Install
