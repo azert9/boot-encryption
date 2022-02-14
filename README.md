@@ -9,21 +9,55 @@ able to replace a long passphrase by the PIN code of your YubiKey.
 
 The steps below assume this configuration:
 * Operating System: Arch Linux
-* Initramfs: Dracut
+* Initramfs: mkinitcpio or Dracut
 * Key Model: YubiKey 5
 
 If your configuration differ, you will have to adapt accordingly. I may also expand this guide in the future.
 
 Obligatory disclaimer: backup your files, make sure you understand your system enough so you can repair it if it is broken, and I am not responsible for any damage. 
 
-## Steps
-
-### Prerequists
+## Prerequists
 
 * You have basic knowledge of GPG, dm-crypt, and the Linux boot process.
-* You are using Dracut (I may add alternative instructions later).
+* You are using mkinitcpio or Dracut.
 * You have one or more encrypted paritions, which are decrypted early at boot.
 * You have a YubiKey with a GPG private key (tested with the YubiKey 5).
+
+## Mkinitcpio
+
+This section is for mkinitcpio only.
+
+### Installing the mkinitcpio hook
+
+Copy the mkinitcpio hook files:
+
+```sh
+sudo cp ./mkinitcpio/hook.sh /etc/initcpio/hooks/gpg-encrypt
+sudo cp ./mkinitcpio/install.sh /etc/initcpio/install/gpg-encrypt
+```
+
+Add the `gpg-encrypt` hook to the list of hooks in `/etc/mkinitcpio.conf`. It should
+be placed just before `encrypt` :
+
+```
+HOOKS=(base ... gpg-encrypt encrypt ...)
+```
+
+### Configuring the encrypt hook
+
+Each decrypted key file is saved as `/run/cryptsetup-keys.d/*.key`. 
+
+In order for the encrypt hook to find the key file of your root partition, you must add a kernel parameter:
+
+```
+cryptkey=rootfs:/run/cryptsetup-keys.d/$NAME.key
+```
+
+Replace `$NAME` by the name of the mapped device, as in `/dev/mapper/$NAME`.
+
+## Dracut
+
+This section is for Dracut only.
 
 ### Enabling GPG Pinentry in Intramfs
 
@@ -54,7 +88,7 @@ Simply copy `95boot-encryption/` from this repository to `/usr/lib/dracut/module
 sudo cp -r ./95boot-encryption /usr/lib/dracut/modules.d/
 ```
 
-### Configuring Your Public Key
+## Configuring Your Public Key
 
 Export your GPG public key to a file named `/etc/boot-encryption/public/*.key`:
 
@@ -65,7 +99,7 @@ gpg --export --armor $GPG_KEY_ID | sudo tee /etc/boot-encryption/public/main.key
 
 All the keys matching this pattern will be imported before performing decryption.
 
-### Adding a Key File to the LUKS Device
+## Adding a Key File to the LUKS Device
 
 Generate a key file and add it to the LUKS device:
 
@@ -92,7 +126,7 @@ sudo rm /tmp/keyfile
 
 Repeat for every encrypted partition that you want to unlock at boot.
 
-### Regenerating the Initramfs
+## Regenerating the Initramfs
 
 Your initramfs must be regenerated. Proceed as usual, and you are done!
 
