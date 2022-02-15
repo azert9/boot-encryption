@@ -24,7 +24,7 @@ set -eu
 exec pinentry-tty --ttyname=/dev/console "$@"
 EOF
 	chmod +x "$pinentry_tmp"
-	add_binary "$pinentry_tmp"
+	add_binary "$pinentry_tmp" /usr/bin/pinentry
 	rm "$pinentry_tmp"
 
 	# Main Script
