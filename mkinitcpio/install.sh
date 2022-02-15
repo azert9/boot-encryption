@@ -1,6 +1,7 @@
 #!/bin/bash
 
-build() {
+build()
+{
 
 	# Config
 
@@ -14,14 +15,17 @@ build() {
 	add_binary /usr/lib/gnupg/scdaemon
 	add_binary pinentry-tty
 
-	cat <<'EOF' > "$BUILDROOT/usr/bin/pinentry"
+	pinentry_tmp="$(mktemp)"
+	cat <<'EOF' > "$pinentry_tmp"
 #!/bin/sh
 
 set -eu
 
 exec pinentry-tty --ttyname=/dev/console "$@"
 EOF
-	chmod +x /usr/bin/pinentry
+	chmod +x "$pinentry_tmp"
+	add_binary "$pinentry_tmp"
+	rm "$pinentry_tmp"
 
 	# Main Script
 
