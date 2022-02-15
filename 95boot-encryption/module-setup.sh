@@ -18,7 +18,7 @@ install() {
 
 	inst basename
 	inst find
-	inst "$moddir/boot-encryption" /usr/bin/boot-encryption
+	inst boot-encryption
 
 	# Main Service
 

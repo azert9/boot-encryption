@@ -88,6 +88,14 @@ Simply copy `95boot-encryption/` from this repository to `/usr/lib/dracut/module
 sudo cp -r ./95boot-encryption /usr/lib/dracut/modules.d/
 ```
 
+## Installing the script
+
+Copy the decryption script:
+
+```
+sudo cp ./boot-encryption /usr/bin/
+```
+
 ## Configuring Your Public Key
 
 Export your GPG public key to a file named `/etc/boot-encryption/public/*.key`:
