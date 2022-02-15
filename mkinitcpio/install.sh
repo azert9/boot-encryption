@@ -1,6 +1,6 @@
-#!/usr/bin/ash
+#!/bin/bash
 
-build {
+build() {
 
 	# Config
 
@@ -27,7 +27,7 @@ EOF
 
 	add_binary basename
 	add_binary find
-	add_binary boot-encyption
+	add_binary boot-encryption
 
 	add_runscript
 }
